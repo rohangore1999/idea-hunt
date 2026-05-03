@@ -147,17 +147,25 @@ export default function Home() {
           transition={{ duration: 0.35, ease: 'easeOut' }}
         >
           <div className="relative h-16 flex items-center justify-center">
-            <motion.span
-              className="font-black uppercase select-none relative z-0 text-2xl sm:text-3xl"
-              animate={{
-                color: TITLE_COLORS[colorIdx].color,
-                textShadow: `3px 3px 0px ${TITLE_COLORS[colorIdx].shadow}`,
-              }}
-              transition={{ duration: 0.6, ease: 'easeInOut' }}
-              style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.3em' }}
-            >
-              IDEAHUNT
-            </motion.span>
+            <div className="flex items-center gap-2 relative z-0 select-none">
+              {/* IH logo mark */}
+              <svg width="28" height="28" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" className="shrink-0">
+                <rect width="32" height="32" fill="#0d0d0d"/>
+                <rect x="1" y="1" width="28" height="28" fill="none" stroke="white" strokeWidth="1.5"/>
+                <text x="16" y="22" fontFamily="Arial Black, Arial, sans-serif" fontWeight="900" fontSize="14" fill="white" textAnchor="middle" letterSpacing="1">IH</text>
+              </svg>
+              <motion.span
+                className="font-black uppercase text-2xl sm:text-3xl"
+                animate={{
+                  color: TITLE_COLORS[colorIdx].color,
+                  textShadow: `3px 3px 0px ${TITLE_COLORS[colorIdx].shadow}`,
+                }}
+                transition={{ duration: 0.6, ease: 'easeInOut' }}
+                style={{ fontFamily: "'Inter', sans-serif", letterSpacing: '0.3em' }}
+              >
+                IDEAHUNT
+              </motion.span>
+            </div>
             <HeaderPets />
           </div>
         </motion.div>

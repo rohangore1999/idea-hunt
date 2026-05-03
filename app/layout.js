@@ -30,6 +30,13 @@ export const metadata = {
   keywords: ['startup ideas', 'product ideas', 'indie hacker', 'build in public', 'saas ideas', 'reddit ideas', 'hacker news ideas'],
   authors: [{ name: 'IdeaHunt' }],
   creator: 'IdeaHunt',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  },
   robots: {
     index: true,
     follow: true,

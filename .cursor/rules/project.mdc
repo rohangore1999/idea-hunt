@@ -6,27 +6,32 @@ alwaysApply: true
 # IdeaHunt Project Rules
 
 ## Language
+
 - Pure JavaScript only — NO TypeScript, NO .ts/.tsx files
 - All files use .js or .jsx extensions
 
 ## Framework
+
 - Next.js 15 App Router
 - API routes in `app/api/*/route.js`
 - Pages in `app/page.jsx`
 - No `use server` unless absolutely needed
 
 ## UI
+
 - shadcn components from `@/components/ui/`
 - Tailwind CSS v4 for all styling
 - No inline styles, no CSS modules
 - Icons via lucide-react only
 
 ## Data Fetching
+
 - No database — all data fetched live from RSS/APIs
 - Caching via Next.js `export const revalidate = 21600` (6hrs)
 - All fetching happens in `lib/rss-fetcher.js`
 
 ## Sources (5 total, no more for MVP)
+
 - r/SomebodyMakeThis — Reddit JSON API, 1+ intent signals
 - r/AppIdeas — Reddit JSON API, 2+ intent signals
 - r/Entrepreneur — Reddit JSON API, 3+ intent signals
@@ -34,11 +39,13 @@ alwaysApply: true
 - Dev.to — REST API, #buildinpublic + #indiehackers tags, 2+ signals
 
 ## Classification
+
 - Keyword-based only, no AI/external API
 - 14 categories defined in `lib/classifier.js`
 - Returns: { category, secondary[], confidence }
 
 ## File Structure
+
 ```
 app/page.jsx             → dashboard
 app/api/ideas/route.js   → fetch + classify
@@ -52,6 +59,7 @@ components/Filters.jsx
 ```
 
 ## What NOT to do
+
 - No TypeScript
 - No database (Supabase, Prisma, etc.)
 - No external backend

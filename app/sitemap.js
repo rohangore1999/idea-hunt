@@ -6,7 +6,7 @@ export default function sitemap() {
       lastModified: new Date(),
       changeFrequency: 'hourly',
       priority: 1,
-      images: [`${base}/og.png`],
+      images: [`${base}/opengraph-image`],
     },
   ]
 }

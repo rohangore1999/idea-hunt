@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { fetchAllIdeas } from '@/lib/rss-fetcher'
 
-export const revalidate = 0 // no cache — force fresh fetch every request (temporary for debugging)
+export const revalidate = 21600 // cache for 6 hours, refresh on next request after TTL
 
 const PAGE_SIZE = 20
 

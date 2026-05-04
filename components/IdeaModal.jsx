@@ -15,7 +15,7 @@ export default function IdeaModal({ idea, onClose }) {
   return (
     <Dialog open={!!idea} onOpenChange={onClose}>
       <DialogContent
-        className="w-[95vw] sm:w-[85vw] md:w-[75vw] lg:w-[65vw] xl:w-[55vw] 2xl:w-[45vw] max-w-none max-h-[90vh] overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden rounded-2xl bg-[#1a1a1a] border border-white/10 text-white"
+        className="w-[calc(100vw-16px)] sm:w-[85vw] md:w-[75vw] lg:w-[65vw] xl:w-[55vw] 2xl:w-[45vw] max-w-none max-h-[90vh] overflow-x-hidden overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden rounded-2xl bg-[#1a1a1a] border border-white/10 text-white"
       >
         <DialogHeader>
           {/* Source label */}

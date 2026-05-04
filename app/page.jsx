@@ -186,6 +186,7 @@ export default function Home() {
       </header>
 
       <main className="max-w-7xl mx-auto px-3 sm:px-6 py-5 flex flex-col gap-5">
+        <h1 className="sr-only">IdeaHunt — Startup and product ideas from Reddit, Hacker News, Dev.to and more</h1>
         {/* Filters */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}

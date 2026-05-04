@@ -33,6 +33,7 @@ export const metadata = {
   icons: {
     icon: [
       { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.svg', sizes: 'any' },
     ],
     shortcut: '/favicon.svg',
     apple: '/favicon.svg',
@@ -62,18 +63,29 @@ export const metadata = {
   },
 };
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'IdeaHunt',
-  url: BASE_URL,
-  description: 'Discover startup and product ideas aggregated from Reddit, Hacker News, Dev.to and more.',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: { '@type': 'EntryPoint', urlTemplate: `${BASE_URL}?q={search_term_string}` },
-    'query-input': 'required name=search_term_string',
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'IdeaHunt',
+    url: BASE_URL,
+    description: 'Discover startup and product ideas aggregated from Reddit, Hacker News, Dev.to and more.',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: { '@type': 'EntryPoint', urlTemplate: `${BASE_URL}?q={search_term_string}` },
+      'query-input': 'required name=search_term_string',
+    },
   },
-}
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'IdeaHunt',
+    url: BASE_URL,
+    logo: `${BASE_URL}/favicon.svg`,
+    description: 'Aggregating startup and product ideas from Reddit, Hacker News, Dev.to and more.',
+    sameAs: ['https://github.com/rohangore1999/idea-hunt'],
+  },
+]
 
 export default function RootLayout({ children }) {
   return (

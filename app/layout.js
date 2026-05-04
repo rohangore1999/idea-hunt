@@ -7,7 +7,7 @@ const inter = Inter({
   display: "swap",
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://ideahunt.app'
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || 'https://idea-hunt.rohangore.com'
 
 export const viewport = {
   width: 'device-width',
@@ -49,13 +49,13 @@ export const metadata = {
     siteName: 'IdeaHunt',
     title: 'IdeaHunt — Startup & product ideas from the internet',
     description: 'Discover startup and product ideas aggregated from Reddit, Hacker News, Dev.to and more.',
-    images: [{ url: '/opengraph-image', width: 1200, height: 630, alt: 'IdeaHunt' }],
+    images: [{ url: `${BASE_URL}/opengraph-image`, width: 1200, height: 630, alt: 'IdeaHunt' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'IdeaHunt — Startup & product ideas from the internet',
     description: 'Discover startup and product ideas aggregated from Reddit, Hacker News, Dev.to and more.',
-    images: ['/opengraph-image'],
+    images: [`${BASE_URL}/opengraph-image`],
   },
   alternates: {
     canonical: BASE_URL,

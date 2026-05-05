@@ -1,11 +1,8 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import Masonry, { ResponsiveMasonry } from 'react-responsive-masonry'
 import IdeaCard from './IdeaCard'
-
-const WINDOW_SIZE = 40   // cards rendered at once
-const STEP = 20          // add more when sentinel hit
 
 const SKELETON_CONFIGS = [
   { titleLines: 2, hasDesc: true,  descLines: 3, tags: 2 },
@@ -67,28 +64,8 @@ function CardSkeleton({ config }) {
 
 export default function MasonryGrid({ ideas, loading, onCardClick }) {
   const [mounted, setMounted] = useState(false)
-  const [visibleCount, setVisibleCount] = useState(WINDOW_SIZE)
-  const sentinelRef = useRef(null)
 
   useEffect(() => setMounted(true), [])
-
-  // Reset window when ideas list changes (filter/sort change)
-  useEffect(() => setVisibleCount(WINDOW_SIZE), [ideas])
-
-  const expand = useCallback(() => {
-    setVisibleCount(c => Math.min(c + STEP, ideas.length))
-  }, [ideas.length])
-
-  useEffect(() => {
-    const el = sentinelRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) expand() },
-      { rootMargin: '200px' }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [expand])
 
   if (!mounted) return null
 
@@ -112,19 +89,13 @@ export default function MasonryGrid({ ideas, loading, onCardClick }) {
     )
   }
 
-  const visible = ideas.slice(0, visibleCount)
-
   return (
-    <>
-      <ResponsiveMasonry columnsCountBreakPoints={{ 0: 2, 1024: 3, 1440: 4 }}>
-        <Masonry gutter="4px">
-          {visible.map((idea, index) => (
-            <IdeaCard key={idea.id} idea={idea} onClick={onCardClick} index={index} />
-          ))}
-        </Masonry>
-      </ResponsiveMasonry>
-      {/* inner sentinel to expand the render window */}
-      {visibleCount < ideas.length && <div ref={sentinelRef} className="h-1" />}
-    </>
+    <ResponsiveMasonry columnsCountBreakPoints={{ 0: 2, 1024: 3, 1440: 4 }}>
+      <Masonry gutter="4px">
+        {ideas.map((idea, index) => (
+          <IdeaCard key={idea.id} idea={idea} onClick={onCardClick} index={index} />
+        ))}
+      </Masonry>
+    </ResponsiveMasonry>
   )
 }

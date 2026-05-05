@@ -100,14 +100,11 @@ export default function IdeaModal({ idea, onClose }) {
               </button>
             </div>
 
-            {/* Title row with share button */}
-            <div className="flex items-start gap-2 min-w-0">
-              <DialogTitle className="flex-1 text-base font-bold leading-snug text-white text-left break-words overflow-wrap-anywhere">
-                {idea.title}
-              </DialogTitle>
-
-              {/* Share button + popover */}
-              <div className="relative shrink-0" ref={shareRef}>
+            {/* Title row with share button inline after title text */}
+            <DialogTitle className="text-base font-bold leading-snug text-white text-left break-words overflow-wrap-anywhere">
+              {idea.title}
+              {/* Share button sits inline immediately after the title text */}
+              <span className="inline-block relative align-middle ml-1.5" ref={shareRef}>
                 <button
                   onClick={() => setShareOpen(o => !o)}
                   className="p-1.5 rounded-lg text-white/30 hover:text-white hover:bg-white/8 transition-colors"
@@ -117,7 +114,7 @@ export default function IdeaModal({ idea, onClose }) {
                 </button>
 
                 {shareOpen && (
-                  <div className="absolute right-0 top-8 z-50 w-44 rounded-xl bg-[#1f1f1f] border border-white/10 shadow-xl overflow-hidden">
+                  <div className="absolute left-0 top-7 z-50 w-44 rounded-xl bg-[#1f1f1f] border border-white/10 shadow-xl overflow-hidden">
                     {SHARE_OPTIONS.map(({ label, icon: Icon, color, action }) => (
                       <button
                         key={label}
@@ -138,8 +135,8 @@ export default function IdeaModal({ idea, onClose }) {
                     ))}
                   </div>
                 )}
-              </div>
-            </div>
+              </span>
+            </DialogTitle>
           </DialogHeader>
 
           {/* Description */}

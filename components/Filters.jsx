@@ -70,9 +70,11 @@ export default function Filters({ filters, onChange, total }) {
             className="w-36 min-h-0 py-0 rounded-lg text-sm bg-white/5 border-white/10 text-white/70"
             style={{ height: "36px" }}
           >
-            <SelectValue />
+            <SelectValue>
+              {{ latest: "Latest", top: "Most Upvoted", comments: "Most Comments" }[filters.sort]}
+            </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent alignItemWithTrigger={false}>
             <SelectItem value="latest">Latest</SelectItem>
             <SelectItem value="top">Most Upvoted</SelectItem>
             <SelectItem value="comments">Most Comments</SelectItem>

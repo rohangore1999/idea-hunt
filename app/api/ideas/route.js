@@ -10,7 +10,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url)
     const source = searchParams.get('source')
     const category = searchParams.get('category')
-    const sort = searchParams.get('sort') || 'latest'
+    const sort = searchParams.get('sort') || 'top'
     const confidence = searchParams.get('confidence')
     const q = searchParams.get('q')
     const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10))

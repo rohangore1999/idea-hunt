@@ -32,7 +32,7 @@ function buildQuery(filters, page) {
   if (filters.sources.length) params.set("source", filters.sources.join(","));
   if (filters.categories.length)
     params.set("category", filters.categories.join(","));
-  if (filters.sort !== "top") params.set("sort", filters.sort);
+  params.set("sort", filters.sort);
   if (filters.confidence !== "all")
     params.set("confidence", filters.confidence);
   if (filters.q) params.set("q", filters.q);

@@ -134,13 +134,19 @@ export default function Home() {
 
         while (true) {
           const { done, value } = await reader.read();
-          if (done) break;
           if (cancelled) { reader.cancel(); break; }
 
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          // Keep the last (possibly incomplete) line in the buffer
-          buffer = lines.pop();
+          if (value) buffer += decoder.decode(value, { stream: true });
+
+          // On final read, flush the remaining buffer; otherwise hold incomplete line
+          let lines;
+          if (done) {
+            lines = buffer.split("\n");
+            buffer = "";
+          } else {
+            lines = buffer.split("\n");
+            buffer = lines.pop(); // last element may be incomplete
+          }
 
           for (const line of lines) {
             if (!line.trim()) continue;
@@ -151,13 +157,11 @@ export default function Home() {
                 setIdeas((prev) => [...prev, ...chunk.ideas]);
                 setTotal((prev) => prev + chunk.ideas.length);
                 if (firstChunk) {
-                  // First source resolved — hide initial spinner, show stream spinner
                   setLoading(false);
                   setLoadingMore(true);
                   firstChunk = false;
                 }
               } else if (chunk.type === "done" && !cancelled) {
-                // All sources settled — hide stream spinner, show end-of-results
                 setLoadingMore(false);
                 setHasMore(false);
               }
@@ -165,6 +169,8 @@ export default function Home() {
               // malformed chunk — skip
             }
           }
+
+          if (done) break;
         }
       } catch (e) {
         if (!cancelled) setError(e.message);

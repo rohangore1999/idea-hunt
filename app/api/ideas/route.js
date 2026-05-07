@@ -1,7 +1,7 @@
 import { fetchSourceIdeas } from '@/lib/rss-fetcher'
 import { SOURCES } from '@/lib/sources'
 
-export const revalidate = 21600
+export const dynamic = 'force-dynamic'
 
 function applyFilters(ideas, { source, category, confidence, q }) {
   if (source) {

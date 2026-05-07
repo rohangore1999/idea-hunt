@@ -39,6 +39,7 @@ function buildQuery(filters, page) {
   return `/api/ideas?${params.toString()}`;
 }
 
+
 export default function Home() {
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -107,34 +108,71 @@ export default function Home() {
     router.replace(qs ? `?${qs}` : "/", { scroll: false });
   }, [router]);
 
-  // Initial + filter-change load
+  // Initial + filter-change load (streaming)
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
       setLoading(true);
+      setLoadingMore(false);
       setError(null);
       setIdeas([]);
+      setTotal(0);
       setPage(1);
-      setHasMore(true);
+      setHasMore(false);
       pageRef.current = 1;
-      hasMoreRef.current = true;
+      hasMoreRef.current = false;
 
       try {
         const res = await fetch(buildQuery(filters, 1));
         if (!res.ok) throw new Error("Failed to fetch");
-        const data = await res.json();
-        if (!cancelled) {
-          setIdeas(data.ideas || []);
-          setTotal(data.total || 0);
-          setHasMore(data.hasMore ?? false);
-          setPage(2);
-          pageRef.current = 2;
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        let firstChunk = true;
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          if (cancelled) { reader.cancel(); break; }
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          // Keep the last (possibly incomplete) line in the buffer
+          buffer = lines.pop();
+
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const chunk = JSON.parse(line);
+
+              if (chunk.type === "ideas" && !cancelled) {
+                setIdeas((prev) => [...prev, ...chunk.ideas]);
+                setTotal((prev) => prev + chunk.ideas.length);
+                if (firstChunk) {
+                  // First source resolved — hide initial spinner, show stream spinner
+                  setLoading(false);
+                  setLoadingMore(true);
+                  firstChunk = false;
+                }
+              } else if (chunk.type === "done" && !cancelled) {
+                // All sources settled — hide stream spinner, show end-of-results
+                setLoadingMore(false);
+                setHasMore(false);
+              }
+            } catch {
+              // malformed chunk — skip
+            }
+          }
         }
       } catch (e) {
         if (!cancelled) setError(e.message);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          setLoadingMore(false);
+        }
       }
     }
 
@@ -144,28 +182,8 @@ export default function Home() {
     };
   }, [filters]);
 
-  // Load next page
-  const loadMore = useCallback(async () => {
-    if (loadingMoreRef.current || !hasMoreRef.current) return;
-    loadingMoreRef.current = true;
-    setLoadingMore(true);
-
-    try {
-      const res = await fetch(buildQuery(filtersRef.current, pageRef.current));
-      if (!res.ok) throw new Error("Failed to fetch");
-      const data = await res.json();
-      setIdeas((prev) => [...prev, ...(data.ideas || [])]);
-      setHasMore(data.hasMore ?? false);
-      setPage((p) => p + 1);
-      pageRef.current += 1;
-      hasMoreRef.current = data.hasMore ?? false;
-    } catch (e) {
-      console.error("loadMore error", e);
-    } finally {
-      setLoadingMore(false);
-      loadingMoreRef.current = false;
-    }
-  }, []);
+  // Load next page — not used during initial streaming; kept for future paginated sources
+  const loadMore = useCallback(() => {}, []);
 
   // IntersectionObserver sentinel
   useEffect(() => {

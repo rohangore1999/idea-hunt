@@ -110,7 +110,7 @@ export default function Home() {
 
   // Initial + filter-change load (streaming)
   useEffect(() => {
-    let cancelled = false;
+    const abortController = new AbortController();
 
     async function load() {
       setLoading(true);
@@ -124,7 +124,7 @@ export default function Home() {
       hasMoreRef.current = false;
 
       try {
-        const res = await fetch(buildQuery(filters, 1));
+        const res = await fetch(buildQuery(filters, 1), { signal: abortController.signal });
         if (!res.ok) throw new Error("Failed to fetch");
 
         const reader = res.body.getReader();
@@ -134,7 +134,6 @@ export default function Home() {
 
         while (true) {
           const { done, value } = await reader.read();
-          if (cancelled) { reader.cancel(); break; }
 
           if (value) buffer += decoder.decode(value, { stream: true });
 
@@ -153,7 +152,7 @@ export default function Home() {
             try {
               const chunk = JSON.parse(line);
 
-              if (chunk.type === "ideas" && !cancelled) {
+              if (chunk.type === "ideas") {
                 setIdeas((prev) => [...prev, ...chunk.ideas]);
                 setTotal((prev) => prev + chunk.ideas.length);
                 if (firstChunk) {
@@ -161,7 +160,7 @@ export default function Home() {
                   setLoadingMore(true);
                   firstChunk = false;
                 }
-              } else if (chunk.type === "done" && !cancelled) {
+              } else if (chunk.type === "done") {
                 setLoadingMore(false);
                 setHasMore(false);
               }
@@ -173,19 +172,15 @@ export default function Home() {
           if (done) break;
         }
       } catch (e) {
-        if (!cancelled) setError(e.message);
+        if (e.name !== "AbortError") setError(e.message);
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-          setLoadingMore(false);
-        }
+        setLoading(false);
+        setLoadingMore(false);
       }
     }
 
     load();
-    return () => {
-      cancelled = true;
-    };
+    return () => abortController.abort();
   }, [filters]);
 
   // Load next page — not used during initial streaming; kept for future paginated sources

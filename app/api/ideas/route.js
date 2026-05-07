@@ -3,6 +3,12 @@ import { SOURCES } from '@/lib/sources'
 
 export const dynamic = 'force-dynamic'
 
+function applySort(ideas, sort) {
+  if (sort === 'top') return ideas.sort((a, b) => b.score - a.score)
+  if (sort === 'comments') return ideas.sort((a, b) => b.comments - a.comments)
+  return ideas.sort((a, b) => b.publishedAt - a.publishedAt)
+}
+
 function applyFilters(ideas, { source, category, confidence, q }) {
   if (source) {
     const sources = source.split(',')
@@ -55,7 +61,8 @@ export async function GET(request) {
           const filtered = applyFilters(unique, filters)
           if (filtered.length === 0) return
 
-          const chunk = JSON.stringify({ type: 'ideas', sourceId: source.id, ideas: filtered })
+          const sorted = applySort(filtered, filters.sort)
+          const chunk = JSON.stringify({ type: 'ideas', sourceId: source.id, ideas: sorted })
           controller.enqueue(encoder.encode(chunk + '\n'))
         }).catch(err => {
           console.error(`[stream] ${source.id} error:`, err.message)

@@ -111,8 +111,12 @@ export default function Home() {
   // Initial + filter-change load (streaming)
   useEffect(() => {
     const abortController = new AbortController();
+    const { signal } = abortController;
 
     async function load() {
+      // Don't touch state if already aborted (Strict Mode cleanup fired before load ran)
+      if (signal.aborted) return;
+
       setLoading(true);
       setLoadingMore(false);
       setError(null);
@@ -124,7 +128,7 @@ export default function Home() {
       hasMoreRef.current = false;
 
       try {
-        const res = await fetch(buildQuery(filters, 1), { signal: abortController.signal });
+        const res = await fetch(buildQuery(filters, 1), { signal });
         if (!res.ok) throw new Error("Failed to fetch");
 
         const reader = res.body.getReader();
@@ -172,10 +176,13 @@ export default function Home() {
           if (done) break;
         }
       } catch (e) {
-        if (e.name !== "AbortError") setError(e.message);
+        if (!signal.aborted) setError(e.message);
       } finally {
-        setLoading(false);
-        setLoadingMore(false);
+        // Only update state if this load wasn't cancelled
+        if (!signal.aborted) {
+          setLoading(false);
+          setLoadingMore(false);
+        }
       }
     }
 
